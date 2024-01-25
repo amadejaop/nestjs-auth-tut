@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-    constructor(private usersService: UsersService) {}
+    constructor(private usersService: UsersService, private jwtService: JwtService) {}
 
     async validateUser(username: string, password: string): Promise<any> {
         // find the user based on the username and store it in user variable
@@ -16,5 +17,14 @@ export class AuthService {
         }
 
         return null;
+    }
+
+    async login(user: any) {
+        // information that we want to save in our jwt
+        const payload = { name: user.name, sub: user.id };
+
+        return {
+            access_token: this.jwtService.sign(payload),
+        }
     }
 }
